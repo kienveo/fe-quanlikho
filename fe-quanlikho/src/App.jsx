@@ -28,7 +28,6 @@ import CreateOrder from "./components/CRUD/Orders/Create";
 import ViewOrder from "./components/CRUD/Orders/View";
 import CreateUser from "./components/CRUD/Users/Create";
 import ViewUser from "./components/CRUD/Users/View";
-import Demo from "./pages/Demo";
 import "./App.css";
 
 function App() {
@@ -44,8 +43,7 @@ function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
 
-          {/* Demo Route - Public */}
-          <Route path="/demo" element={<Demo />} />
+          
 
           {/* Dashboard Routes - Protected */}
           <Route

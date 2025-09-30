@@ -53,25 +53,15 @@ axiosInstance.interceptors.request.use(
           config.headers["Authorization"] = `Bearer ${accessToken}`;
           return config;
         } else {
-          // Refresh thất bại
-          localStorage.removeItem("authToken");
-          localStorage.removeItem("refreshToken");
-          localStorage.removeItem("tokenExpiredAt");
-          window.location.reload();
+          // Refresh thất bại: không xóa token, không reload để tránh auto-logout
           return Promise.reject(new Error("Refresh token failed"));
         }
       } catch (err) {
-        // Refresh thất bại
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("tokenExpiredAt");
-        window.location.reload();
+        // Refresh thất bại: không xóa token, không reload để tránh auto-logout
         return Promise.reject(err);
       }
     }
-    // Không có refreshToken hoặc không hợp lệ
-    // Chỉ xóa token nếu thực sự cần thiết, không reload page
-    console.warn("No valid token found, but not clearing auth data");
+    // Không có refreshToken hoặc không hợp lệ: bỏ qua auth cho request này, không logout
     return config;
   },
   (error) => Promise.reject(error)

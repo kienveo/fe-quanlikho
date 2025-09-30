@@ -53,20 +53,6 @@ const PieChartByDistrict = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Check for demo data first
-        const demoDistrictData = localStorage.getItem('demo_district_data');
-        if (demoDistrictData) {
-          try {
-            const demoData = JSON.parse(demoDistrictData);
-            setData(demoData);
-            setColors(generateColors(demoData.length));
-            setLoading(false);
-            return;
-          } catch (error) {
-            console.error("Error parsing demo district data:", error);
-          }
-        }
-
         const res = await axiosInstance.get(
           "/api/v1/un_auth/category/all"
         );

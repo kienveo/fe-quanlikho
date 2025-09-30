@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "../Layout/AuthLayout";
 import Input from "../Common/Input";
 import Button from "../Common/Button";
 import { showToast } from "../Common/Toast";
 import axiosInstance from "../../api/axiosInstance";
-import { mockAuth } from "../../utils/mockAuth";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,18 +15,7 @@ const Login = () => {
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [isBackendAvailable, setIsBackendAvailable] = useState(true);
-  const [isCheckingBackend, setIsCheckingBackend] = useState(true);
-
-  // Check backend status on component mount
-  useEffect(() => {
-    const checkBackend = async () => {
-      const isAvailable = await mockAuth.checkBackendStatus();
-      setIsBackendAvailable(isAvailable);
-      setIsCheckingBackend(false);
-    };
-    checkBackend();
-  }, []);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,22 +53,11 @@ const Login = () => {
     }
 
     try {
-      let result;
-      
-      if (isBackendAvailable) {
-        // Use real API
-        const response = await axiosInstance.post("/api/v1/un_auth/signin", {
-          username: formData.username,
-          password: formData.password,
-        });
-        result = response.data;
-      } else {
-        // Use mock auth
-        result = await mockAuth.login({
-          username: formData.username,
-          password: formData.password,
-        });
-      }
+      const response = await axiosInstance.post("/api/v1/un_auth/signin", {
+        username: formData.username,
+        password: formData.password,
+      });
+      const result = response.data;
 
       if (result.status === 200) {
         // Success
@@ -150,21 +127,7 @@ const Login = () => {
       </div>
 
       <form onSubmit={handleSubmit}>
-        {isCheckingBackend && (
-          <div className="alert alert-info" role="alert">
-            <i className="bi bi-hourglass-split me-2"></i>
-            Đang kiểm tra kết nối backend...
-          </div>
-        )}
         
-        {!isCheckingBackend && !isBackendAvailable && (
-          <div className="alert alert-warning" role="alert">
-            <i className="bi bi-exclamation-triangle me-2"></i>
-            <strong>Chế độ Demo:</strong> Backend không khả dụng, đang sử dụng dữ liệu mock.
-            <br />
-            <small>Tài khoản demo: admin@demo.com / admin123</small>
-          </div>
-        )}
         
         {errors.general && (
           <div className="alert alert-danger" role="alert">

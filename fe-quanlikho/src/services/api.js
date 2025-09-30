@@ -59,29 +59,17 @@ apiClient.interceptors.request.use(
           config.headers.Authorization = `Bearer ${accessToken}`;
           return config;
         } else {
-          // Refresh thất bại
-          localStorage.removeItem("authToken");
-          localStorage.removeItem("refreshToken");
-          localStorage.removeItem("tokenExpiredAt");
-          window.location.reload();
+          // Refresh thất bại: không xóa token, không reload để tránh auto-logout
           return Promise.reject(new Error("Refresh token failed"));
         }
       } catch (err) {
-        // Refresh thất bại
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("tokenExpiredAt");
-        window.location.reload();
+        // Refresh thất bại: không xóa token, không reload để tránh auto-logout
         return Promise.reject(err);
       }
     }
     
-    // Không có refreshToken hoặc không hợp lệ
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("tokenExpiredAt");
-    window.location.reload();
-    return Promise.reject(new Error("No valid token"));
+    // Không có refreshToken hoặc không hợp lệ: bỏ qua auth cho request này
+    return config;
   },
   (error) => {
     return Promise.reject(error);
@@ -99,10 +87,8 @@ apiClient.interceptors.response.use(
     if (response) {
       switch (response.status) {
         case HTTP_STATUS.UNAUTHORIZED:
+          // Không ép logout ngay lập tức để tránh nhảy về trang đăng nhập
           message.error(API_MESSAGES.UNAUTHORIZED);
-          clearToken();
-          clearUser();
-          window.location.href = '/login';
           break;
         case HTTP_STATUS.FORBIDDEN:
           message.error(API_MESSAGES.FORBIDDEN);
