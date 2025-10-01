@@ -4,7 +4,8 @@ import AuthLayout from "../Layout/AuthLayout";
 import Input from "../Common/Input";
 import Button from "../Common/Button";
 import { showToast } from "../Common/Toast";
-import axiosInstance from "../../api/axiosInstance";
+import { findUserByCredentials } from "../../utils/mockUsers";
+import { setToken, setUser } from "../../utils/auth";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -53,67 +54,47 @@ const Login = () => {
     }
 
     try {
-      const response = await axiosInstance.post("/api/v1/un_auth/signin", {
-        username: formData.username,
-        password: formData.password,
-      });
-      const result = response.data;
-
-      if (result.status === 200) {
-        // Success
-        showToast(result.message || "Login successful!", {
+      // Sử dụng mock data thay vì API call
+      const user = findUserByCredentials(formData.username, formData.password);
+      
+      if (user) {
+        // Login successful
+        showToast("Đăng nhập thành công!", {
           type: "success",
         });
-        // Save token, refreshToken and expired time
-        localStorage.setItem("authToken", result.data.accessToken);
-        localStorage.setItem("refreshToken", result.data.refreshToken);
-        if (result.data.expiresIn) {
-          const expiredAt = Date.now() + result.data.expiresIn * 1000;
-          localStorage.setItem("tokenExpiredAt", expiredAt.toString());
-        }
-        // Also save user data
-        if (result.data.user) {
-          localStorage.setItem("authUser", JSON.stringify(result.data.user));
-        }
-        // Redirect
-        navigate("/dashboard/overview", { replace: true });
-      } else if (result.status === 400 && Array.isArray(result.data)) {
-        // Validation error
-        const fieldErrors = {};
-        result.data.forEach((err) => {
-          fieldErrors[err.field] = err.message;
+        
+        // Tạo mock token
+        const mockToken = `mock_token_${user.id}_${Date.now()}`;
+        const expiredAt = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
+        
+        // Save token and user data using auth utils
+        setToken(mockToken);
+        localStorage.setItem("tokenExpiredAt", expiredAt.toString());
+        setUser({
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          permissions: user.permissions
         });
-        setErrors(fieldErrors);
-        showToast(result.message || "Validation error!", { type: "error" });
+        
+        // Redirect based on role
+        if (user.role === "Admin") {
+          navigate("/dashboard/overview", { replace: true });
+        } else if (user.role === "Manager") {
+          navigate("/dashboard/overview", { replace: true });
+        } else {
+          navigate("/dashboard/overview", { replace: true });
+        }
       } else {
-        // Other error
-        setErrors({ general: result.message || "Login failed." });
-        showToast(result.message || "Login failed!", { type: "error" });
+        // Invalid credentials
+        setErrors({ general: "Tên đăng nhập hoặc mật khẩu không đúng." });
+        showToast("Tên đăng nhập hoặc mật khẩu không đúng!", { type: "error" });
       }
     } catch (error) {
-      if (error.response && error.response.data) {
-        const result = error.response.data;
-        if (result.status === 401 && result.message === "Need to verify") {
-          showToast(result.message || "You need to verify your account!", {
-            type: "warning",
-          });
-          navigate("/verify-otp", { state: { email: formData.username } });
-        } else if (result.status === 400 && Array.isArray(result.data)) {
-          // Validation error
-          const fieldErrors = {};
-          result.data.forEach((err) => {
-            fieldErrors[err.field] = err.message;
-          });
-          setErrors(fieldErrors);
-          showToast(result.message || "Validation error!", { type: "error" });
-        } else {
-          setErrors({ general: result.message || "Login failed." });
-          showToast(result.message || "Login failed!", { type: "error" });
-        }
-      } else {
-        setErrors({ general: "Unable to connect to server." });
-        showToast("Unable to connect to server!", { type: "error" });
-      }
+      setErrors({ general: "Có lỗi xảy ra khi đăng nhập." });
+      showToast("Có lỗi xảy ra khi đăng nhập!", { type: "error" });
     } finally {
       setIsLoading(false);
     }
@@ -123,7 +104,7 @@ const Login = () => {
     <AuthLayout>
       <div className="text-center mb-4">
         <h2 className="fw-bold text-dark mb-2">Xin chào</h2>
-        <p className="text-muted">Chào mừng trở lại hệ thống quản lý kho</p>
+        <p className="text-muted">Chào mừng bạn đến với hệ thống quản lý kho</p>
       </div>
 
       <form onSubmit={handleSubmit}>

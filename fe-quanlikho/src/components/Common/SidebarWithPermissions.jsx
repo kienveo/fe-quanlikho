@@ -1,49 +1,63 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getUser } from "../../utils/auth";
+import { hasPermission } from "../../utils/mockUsers";
 
-const Sidebar = () => {
+const SidebarWithPermissions = () => {
   const location = useLocation();
   const user = getUser();
 
-  const menuItems = [
+  // Định nghĩa menu items với permissions
+  const allMenuItems = [
     {
       path: "/dashboard/overview",
       icon: "bi bi-graph-up",
       label: "Tổng quan",
       active: location.pathname.includes("/overview"),
+      permission: "dashboard.read"
     },
     {
       path: "/dashboard/products",
       icon: "bi bi-box-seam",
       label: "Sản phẩm",
       active: location.pathname.includes("/products"),
+      permission: "product.read"
     },
     {
       path: "/dashboard/categories",
       icon: "bi bi-tags",
       label: "Danh mục",
       active: location.pathname.includes("/categories"),
+      permission: "category.read"
     },
     {
       path: "/dashboard/orders",
       icon: "bi bi-cart-check",
       label: "Đơn hàng",
       active: location.pathname.includes("/orders"),
+      permission: "order.read"
     },
     {
       path: "/dashboard/users",
       icon: "bi bi-person",
       label: "Người dùng",
       active: location.pathname.includes("/users"),
+      permission: "user.read"
     },
     {
       path: "/dashboard/reports",
       icon: "bi bi-file-earmark-bar-graph",
       label: "Báo cáo",
       active: location.pathname.includes("/reports"),
+      permission: "report.read"
     },
   ];
+
+  // Lọc menu items theo permission của user
+  const menuItems = allMenuItems.filter(item => {
+    if (!user) return true; // Hiển thị tất cả nếu chưa đăng nhập
+    return hasPermission(user, item.permission);
+  });
 
   return (
     <div
@@ -139,4 +153,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default SidebarWithPermissions;

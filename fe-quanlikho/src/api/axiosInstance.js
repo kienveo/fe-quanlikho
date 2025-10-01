@@ -1,4 +1,5 @@
 import axios from "axios";
+import { MOCK_MODE } from "../config/mockConfig";
 
 // Base URL của API backend
 const BASE_URL = "http://localhost:8080";
@@ -12,6 +13,11 @@ const axiosInstance = axios.create({
 // Interceptor cho request: tự động thêm accessToken nếu còn hạn
 axiosInstance.interceptors.request.use(
   async (config) => {
+    // Nếu đang ở mock mode, bỏ qua interceptor
+    if (MOCK_MODE) {
+      return config;
+    }
+    
     // Bỏ qua interceptor cho các API public không cần token
     if (
       config.url.includes("/un_auth/") ||
@@ -66,5 +72,53 @@ axiosInstance.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+// Wrapper để sử dụng mock hoặc real API
+const createMockResponse = (url, method, data) => {
+  console.log(`Mock ${method.toUpperCase()}: ${url}`, data);
+  
+  // Mock user info
+  if (url.includes('/auth/aboutme')) {
+    const user = JSON.parse(localStorage.getItem('authUser') || '{}');
+    return Promise.resolve({
+      data: {
+        status: 200,
+        data: user.name || user.username || 'Mock User'
+      }
+    });
+  }
+  
+  // Mock logout
+  if (url.includes('/auth/logout')) {
+    return Promise.resolve({
+      data: {
+        status: 200,
+        message: 'Logout successful'
+      }
+    });
+  }
+  
+  // Mock other API responses
+  return Promise.resolve({
+    data: {
+      status: 200,
+      data: [],
+      message: 'Mock response'
+    }
+  });
+};
+
+// Override axios methods khi ở mock mode
+if (MOCK_MODE) {
+  const originalGet = axiosInstance.get;
+  const originalPost = axiosInstance.post;
+  const originalPut = axiosInstance.put;
+  const originalDelete = axiosInstance.delete;
+  
+  axiosInstance.get = (url, config) => createMockResponse(url, 'get', config);
+  axiosInstance.post = (url, data, config) => createMockResponse(url, 'post', data);
+  axiosInstance.put = (url, data, config) => createMockResponse(url, 'put', data);
+  axiosInstance.delete = (url, config) => createMockResponse(url, 'delete', config);
+}
 
 export default axiosInstance;

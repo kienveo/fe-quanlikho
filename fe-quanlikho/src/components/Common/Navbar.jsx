@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../api/axiosInstance";
 import { showToast } from "./Toast";
+import { getUser, clearToken, clearUser } from "../../utils/auth";
+import axiosInstance from "../../api/axiosInstance";
 
 const Navbar = ({ title = "" }) => {
   const navigate = useNavigate();
@@ -15,26 +16,25 @@ const Navbar = ({ title = "" }) => {
           setUsername(res.data.data);
         }
       } catch (err) {
-        if (err.response && err.response.status === 401) {
-          showToast("Phiên đăng nhập đã hết hạn!", { type: "error" });
-          localStorage.removeItem("authToken");
-          localStorage.removeItem("refreshToken");
-          localStorage.removeItem("tokenExpiredAt");
-          navigate("/login");
+        // Fallback to localStorage if API fails
+        const user = getUser();
+        if (user) {
+          setUsername(user.name || user.username);
         }
       }
     };
     fetchUser();
-  }, [navigate]);
+  }, []);
 
   const handleLogout = async () => {
     try {
+      // Gọi logout API (mock hoặc real)
       await axiosInstance.post("/auth/logout", {});
       showToast("Đăng xuất thành công!", { type: "success" });
     } finally {
-      // Xoá token
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("refreshToken");
+      // Xoá token và user data
+      clearToken();
+      clearUser();
       localStorage.removeItem("tokenExpiredAt");
       // Điều hướng về login
       navigate("/login");

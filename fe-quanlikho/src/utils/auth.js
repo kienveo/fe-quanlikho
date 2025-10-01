@@ -1,5 +1,5 @@
-export const AUTH_TOKEN_KEY = 'auth_token';
-export const AUTH_USER_KEY = 'auth_user';
+export const AUTH_TOKEN_KEY = 'authToken';
+export const AUTH_USER_KEY = 'authUser';
 
 export function setToken(token) {
   localStorage.setItem(AUTH_TOKEN_KEY, token);

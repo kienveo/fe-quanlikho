@@ -1,5 +1,5 @@
 import React from "react";
-import Sidebar from "../Common/Sidebar";
+import SidebarWithPermissions from "../Common/SidebarWithPermissions";
 import Navbar from "../Common/Navbar";
 
 const DashboardLayout = ({ children }) => {
@@ -20,7 +20,7 @@ const DashboardLayout = ({ children }) => {
           zIndex: 1000,
         }}
       >
-        <Sidebar />
+        <SidebarWithPermissions />
       </div>
 
       {/* Fixed Top Navbar */}
