@@ -120,7 +120,6 @@ import { SidebarWithPermissions } from '../components/Common';
 - [x] Component RoleGuard để bảo vệ routes
 - [x] Sidebar hiển thị menu theo quyền
 - [x] Hiển thị thông tin user trong sidebar
-- [x] Demo component để test hệ thống
 
 ### 🔧 Cách thêm user mới:
 
@@ -154,9 +153,7 @@ import { SidebarWithPermissions } from '../components/Common';
 </RoleGuard>
 ```
 
-## Demo
-
-Truy cập `/demo-role` để xem demo hệ thống phân quyền với các tài khoản test.
+ 
 
 ## Lưu ý
 
