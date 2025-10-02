@@ -98,68 +98,19 @@ const ViewCategory = () => {
                 <div className="col-md-6">
                   <label className="form-label fw-semibold">Trạng thái</label>
                   <div className="form-control-plaintext">
-                    <span className={`badge ${category.status === 'active' ? 'bg-success' : 'bg-secondary'} fs-6`}>
-                      {category.status === 'active' ? 'Hoạt động' : 'Ngừng hoạt động'}
+                    <span className={`badge ${category.status === 'active' ? 'bg-success' : 'bg-secondary'}`}>
+                      {category.status === 'active' ? 'Hoạt động' : 'Ngừng sử dụng'}
                     </span>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-lg-4">
-          <div className="card">
-            <div className="card-header">
-              <h5 className="card-title mb-0">Thông tin bổ sung</h5>
-            </div>
-            <div className="card-body">
-              <div className="row g-3">
-                <div className="col-12">
+                <div className="col-md-6">
                   <label className="form-label fw-semibold">Ngày tạo</label>
-                  <div className="form-control-plaintext">
-                    <i className="bi bi-calendar3 me-2"></i>
-                    {new Date(category.createdAt).toLocaleDateString('vi-VN')}
-                  </div>
+                  <div className="form-control-plaintext">{category.createdAt}</div>
                 </div>
-                <div className="col-12">
-                  <label className="form-label fw-semibold">Cập nhật lần cuối</label>
-                  <div className="form-control-plaintext">
-                    <i className="bi bi-clock me-2"></i>
-                    {new Date(category.updatedAt).toLocaleDateString('vi-VN')}
-                  </div>
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold">Ngày cập nhật</label>
+                  <div className="form-control-plaintext">{category.updatedAt}</div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="card mt-3">
-            <div className="card-header">
-              <h5 className="card-title mb-0">Thao tác nhanh</h5>
-            </div>
-            <div className="card-body">
-              <div className="d-grid gap-2">
-                <Button
-                  variant="outline-primary"
-                  onClick={() => navigate(`/dashboard/products/create?category=${category.id}`)}
-                >
-                  <i className="bi bi-plus-circle me-2"></i>
-                  Thêm sản phẩm
-                </Button>
-                <Button
-                  variant="outline-info"
-                  onClick={() => navigate(`/dashboard/products?category=${category.name}`)}
-                >
-                  <i className="bi bi-box-seam me-2"></i>
-                  Xem sản phẩm
-                </Button>
-                <Button
-                  variant="outline-warning"
-                  onClick={() => console.log("View statistics")}
-                >
-                  <i className="bi bi-graph-up me-2"></i>
-                  Thống kê
-                </Button>
               </div>
             </div>
           </div>

@@ -101,8 +101,7 @@ const ViewOrder = () => {
 
       <div className="row">
         <div className="col-lg-8">
-          {/* Order Information */}
-          <div className="card mb-4">
+          <div className="card">
             <div className="card-header">
               <h5 className="card-title mb-0">Thông tin đơn hàng</h5>
             </div>
@@ -113,45 +112,7 @@ const ViewOrder = () => {
                   <div className="form-control-plaintext">{order.orderNumber}</div>
                 </div>
                 <div className="col-md-6">
-                  <label className="form-label fw-semibold">Ngày đặt hàng</label>
-                  <div className="form-control-plaintext">
-                    <i className="bi bi-calendar3 me-2"></i>
-                    {new Date(order.orderDate).toLocaleDateString('vi-VN')}
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label fw-semibold">Trạng thái</label>
-                  <div className="form-control-plaintext">
-                    {getStatusBadge(order.status)}
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label fw-semibold">Tổng tiền</label>
-                  <div className="form-control-plaintext">
-                    <span className="fw-bold text-success fs-5">
-                      {order.totalAmount.toLocaleString('vi-VN')} VNĐ
-                    </span>
-                  </div>
-                </div>
-                {order.notes && (
-                  <div className="col-12">
-                    <label className="form-label fw-semibold">Ghi chú</label>
-                    <div className="form-control-plaintext">{order.notes}</div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Customer Information */}
-          <div className="card mb-4">
-            <div className="card-header">
-              <h5 className="card-title mb-0">Thông tin khách hàng</h5>
-            </div>
-            <div className="card-body">
-              <div className="row g-3">
-                <div className="col-md-6">
-                  <label className="form-label fw-semibold">Tên khách hàng</label>
+                  <label className="form-label fw-semibold">Khách hàng</label>
                   <div className="form-control-plaintext">{order.customerName}</div>
                 </div>
                 <div className="col-md-6">
@@ -162,125 +123,39 @@ const ViewOrder = () => {
                   <label className="form-label fw-semibold">Số điện thoại</label>
                   <div className="form-control-plaintext">{order.customerPhone}</div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Order Items */}
-          <div className="card">
-            <div className="card-header">
-              <h5 className="card-title mb-0">Sản phẩm trong đơn hàng</h5>
-            </div>
-            <div className="card-body p-0">
-              <div className="table-responsive">
-                <table className="table table-hover mb-0">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Sản phẩm</th>
-                      <th>Đơn giá</th>
-                      <th>Số lượng</th>
-                      <th>Thành tiền</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {order.items.map(item => (
-                      <tr key={item.id}>
-                        <td>
-                          <div className="fw-semibold">{item.name}</div>
-                        </td>
-                        <td>{item.price.toLocaleString('vi-VN')} VNĐ</td>
-                        <td>
-                          <span className="badge bg-light text-dark">
-                            {item.quantity}
-                          </span>
-                        </td>
-                        <td className="fw-bold">
-                          {item.total.toLocaleString('vi-VN')} VNĐ
-                        </td>
-                      </tr>
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold">Tổng tiền</label>
+                  <div className="form-control-plaintext">{order.totalAmount?.toLocaleString('vi-VN')} VNĐ</div>
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold">Trạng thái</label>
+                  <div className="form-control-plaintext">
+                    {getStatusBadge(order.status)}
+                  </div>
+                  <div className="mt-2">
+                    <Button variant="outline-info" size="sm" onClick={() => handleStatusChange("completed")}>Hoàn thành</Button>{' '}
+                    <Button variant="outline-danger" size="sm" onClick={() => handleStatusChange("cancelled")}>Hủy</Button>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold">Ngày đặt</label>
+                  <div className="form-control-plaintext">{order.orderDate}</div>
+                </div>
+                <div className="col-12">
+                  <label className="form-label fw-semibold">Ghi chú</label>
+                  <div className="form-control-plaintext">{order.notes}</div>
+                </div>
+                <div className="col-12">
+                  <label className="form-label fw-semibold">Sản phẩm</label>
+                  <ul className="list-group">
+                    {order.items && order.items.map(item => (
+                      <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center">
+                        {item.name} <span className="badge bg-primary">x{item.quantity}</span>
+                        <span>{item.price?.toLocaleString('vi-VN')} VNĐ</span>
+                      </li>
                     ))}
-                  </tbody>
-                  <tfoot className="table-light">
-                    <tr>
-                      <th colSpan="3">Tổng cộng:</th>
-                      <th className="text-success">
-                        {order.totalAmount.toLocaleString('vi-VN')} VNĐ
-                      </th>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-lg-4">
-          {/* Status Actions */}
-          <div className="card">
-            <div className="card-header">
-              <h5 className="card-title mb-0">Thay đổi trạng thái</h5>
-            </div>
-            <div className="card-body">
-              <div className="d-grid gap-2">
-                {order.status === 'pending' && (
-                  <Button
-                    variant="outline-success"
-                    onClick={() => handleStatusChange('processing')}
-                  >
-                    <i className="bi bi-check-circle me-2"></i>
-                    Xác nhận đơn hàng
-                  </Button>
-                )}
-                {order.status === 'processing' && (
-                  <Button
-                    variant="outline-success"
-                    onClick={() => handleStatusChange('completed')}
-                  >
-                    <i className="bi bi-check-circle-fill me-2"></i>
-                    Hoàn thành
-                  </Button>
-                )}
-                {(order.status === 'pending' || order.status === 'processing') && (
-                  <Button
-                    variant="outline-danger"
-                    onClick={() => handleStatusChange('cancelled')}
-                  >
-                    <i className="bi bi-x-circle me-2"></i>
-                    Hủy đơn hàng
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="card mt-3">
-            <div className="card-header">
-              <h5 className="card-title mb-0">Thao tác nhanh</h5>
-            </div>
-            <div className="card-body">
-              <div className="d-grid gap-2">
-                <Button
-                  variant="outline-primary"
-                  onClick={() => console.log("Print invoice")}
-                >
-                  <i className="bi bi-printer me-2"></i>
-                  In hóa đơn
-                </Button>
-                <Button
-                  variant="outline-info"
-                  onClick={() => console.log("Send email")}
-                >
-                  <i className="bi bi-envelope me-2"></i>
-                  Gửi email
-                </Button>
-                <Button
-                  variant="outline-warning"
-                  onClick={() => console.log("View history")}
-                >
-                  <i className="bi bi-clock-history me-2"></i>
-                  Lịch sử thay đổi
-                </Button>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
