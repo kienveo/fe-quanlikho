@@ -6,8 +6,6 @@ import SearchForm from "../Common/SearchForm";
 import Button from "../Common/Button";
 import axiosInstance from "../../api/axiosInstance";
 import { isAuthenticated } from "../../utils/authUtils";
-import * as XLSX from "xlsx";
-import jsPDF from "jspdf";
 import "jspdf-autotable";
 
 const ProductManagement = () => {
@@ -135,39 +133,6 @@ const ProductManagement = () => {
     return matchesSearch && matchesCategory;
   });
 
-  const handleExportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(products);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
-    XLSX.writeFile(workbook, "products.xlsx");
-  };
-
-  const handleExportPDF = () => {
-    const doc = new jsPDF();
-    const columns = Object.keys(products[0] || {});
-    const rows = products.map(product => columns.map(col => product[col]));
-    doc.autoTable({ head: [columns], body: rows });
-    doc.save("products.pdf");
-  };
-
-  return (
-    <DashboardLayout>
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="h4 mb-0 fw-bold">Quản lý sản phẩm</h2>
-        <div className="d-flex gap-2">
-          <Button variant="outline-success" onClick={handleExportExcel}>
-            <i className="bi bi-file-earmark-excel me-2"></i> Xuất Excel
-          </Button>
-          <Button variant="outline-danger" onClick={handleExportPDF}>
-            <i className="bi bi-file-earmark-pdf me-2"></i> Xuất PDF
-          </Button>
-          <Link to="/dashboard/products/create" className="btn btn-primary">
-            <i className="bi bi-plus-circle me-2"></i>
-            Thêm sản phẩm
-          </Link>
-        </div>
-      </div>
-
       {/* Search and Filter */}
       <div className="row mb-4">
         <div className="col-12">
@@ -212,7 +177,8 @@ const ProductManagement = () => {
           </div>
         </div>
       </div>
-
+    return (
+    <DashboardLayout>
       {/* Products Table */}
       <div className="row">
         <div className="col-12">
@@ -243,6 +209,7 @@ const ProductManagement = () => {
           </div>
         </div>
       </div>
+    return (
     </DashboardLayout>
   );
 };
