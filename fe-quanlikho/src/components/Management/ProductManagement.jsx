@@ -2,11 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import DashboardLayout from "../Layout/DashboardLayout";
 import DataTable from "../Common/DataTable";
-import SearchForm from "../Common/SearchForm";
-import Button from "../Common/Button";
 import axiosInstance from "../../api/axiosInstance";
 import { isAuthenticated } from "../../utils/authUtils";
-import "jspdf-autotable";
 
 const ProductManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
